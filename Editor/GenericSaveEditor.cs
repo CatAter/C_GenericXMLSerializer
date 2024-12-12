@@ -7,51 +7,117 @@ using UnityEngine;
 namespace GenericSaveEditor
 {
     /// <summary>
+    /// The operation type to use during serialization. 
+    /// </summary>
+    public enum OperationType
+    {
+        DEFAULT,
+        EXTERNAL
+    }
+
+    /// <summary>
+    /// The serialization format to use. 
+    /// </summary>
+    public enum SerializationFormat
+    {
+        XML,
+        JSON
+    }
+
+    /// <summary>
     /// Class used to define serialization schema. 
     /// </summary>
     public class SerializationSchema
     {
+        public const string XML_EXTENSION = ".xml";
+        public const string JSON_EXTENSION = ".json";
+        public SerializationFormat serializationType = SerializationFormat.XML;
+
         /// <summary>
         /// The filename used for naming default data files. 
         /// </summary>
-        public string defaultFilename = "DLS_{0}.xml";
+        public string defaultFilename = "DLS";
 
         /// <summary>
         /// The filename used for naming player data files. 
         /// </summary>
-        public string externalFileName = "PLS_{0}.xml";
+        public string externalFilename = "PLS";
 
         /// <summary>
         /// String used to name the directory for IO. 
         /// </summary>
-        public string folderName = "/Data/";
+        public string folderName = "Data";
 
         /// <summary>
         /// The folder path for persistent player data. 
         /// </summary>
-        public string PersistentDataPath => Application.persistentDataPath + folderName;
+        public string PersistentDataPath => Application.persistentDataPath + "/" + folderName + "/";
 
         /// <summary>
         /// The folder path for serialized editor data.  
         /// </summary>
-        public string StreamingAssetsPath => Application.streamingAssetsPath + folderName;
+        public string StreamingAssetsPath => Application.streamingAssetsPath + "/" + folderName + "/";
 
         /// <summary>
         /// Returns the full path used for default data file serialization/deserialization. 
         /// </summary>
         /// <param name="additionalNameData">The additional name data provided. </param>
-        public string GetFullPath_Default(string additionalNameData)
+        public string GetFullPath_Default(string additionalNameData, bool addExtentsion = false)
         {
-            return StreamingAssetsPath + string.Format(defaultFilename, additionalNameData);
+            return StreamingAssetsPath + GetFullFileName(additionalNameData, OperationType.DEFAULT, addExtentsion);
         }
 
         /// <summary>
         /// Returns the full path used for Player data file serialization/deserialization. 
         /// </summary>
         /// <param name="additionalNameData">The additional name data provided. </param>
-        public string GetFullPath_Player(string additionalNameData)
+        public string GetFullPath_External(string additionalNameData, bool addExtension = false)
         {
-            return PersistentDataPath + string.Format(externalFileName, additionalNameData);
+            return PersistentDataPath + GetFullFileName(additionalNameData, OperationType.EXTERNAL, addExtension);
+        }
+
+        /// <summary>
+        /// Returns the full file name with provided additional data. 
+        /// </summary>
+        /// <param name="additionalNameData"> The additional file name data. </param>
+        /// <param name="opType"> The operation type to perform. </param>
+        /// <param name="addExtension"> </param>
+        /// <returns> Returns the formatted string with added details. </returns>
+        public string GetFullFileName(string additionalNameData, OperationType opType, bool addExtension = false)
+        {
+            string baseString = "";
+            string extent = "";
+
+            switch (opType)
+            {
+                case OperationType.DEFAULT:
+                    baseString = defaultFilename + "_{0}";
+                    break;
+                case OperationType.EXTERNAL:
+                    baseString = externalFilename + "_{0}";
+                    break;
+                default:
+                    baseString = defaultFilename + "_{0}";
+                    break;
+            }
+
+            if (addExtension)
+            {
+                switch (serializationType)
+                {
+                    case SerializationFormat.XML:
+                        extent = XML_EXTENSION;
+                        break;
+                    case SerializationFormat.JSON:
+                        extent = JSON_EXTENSION;
+                        break;
+                    default:
+                        extent = XML_EXTENSION;
+                        break;
+                }
+            }
+
+            return string.Format(baseString + extent, additionalNameData);
         }
     }
 
@@ -61,15 +127,6 @@ namespace GenericSaveEditor
     /// <typeparam name="T"> The type used by the class. </typeparam>
     public class GenericSaveHandler<T> where T : class
     {
-        /// <summary>
-        /// The operation type to use during serialization. 
-        /// </summary>
-        public enum OperationType
-        {
-            DEFAULT,
-            PLAYER
-        }
-
         /// <summary>
         /// flag denoting whether internal data serialization should be used.  
         /// </summary>
@@ -139,7 +196,7 @@ namespace GenericSaveEditor
                         if (SaveDefaultAction == null) Debug.Log("GenericSaveHandler: No custom SaveDefaultAction provided, Save Failed.");
                         else SaveDefaultAction?.Invoke(data, this.schema, additionalNameData);
                         break;
-                    case OperationType.PLAYER:
+                    case OperationType.EXTERNAL:
                         //Check if the action is assigned, if not debug, ELSE use provided custom serialization. 
                         if (SaveDefaultAction == null) Debug.Log("GenericSaveHandler: No custom SaveDefaultAction provided, Save Failed.");
                         else SavePlayerAction?.Invoke(data, this.schema, additionalNameData);
@@ -159,23 +216,26 @@ namespace GenericSaveEditor
                 {
                     case OperationType.DEFAULT:
                         path += schema.StreamingAssetsPath;
-                        filename += schema.defaultFilename;
                         break;
-                    case OperationType.PLAYER:
+                    case OperationType.EXTERNAL:
                         path += schema.PersistentDataPath;
-                        filename += schema.externalFileName;
                         break;
                 }
 
-                filename = string.Format(filename, additionalNameData);
+                filename = schema.GetFullFileName(additionalNameData, opType, true);
                 fullPath = path + filename;
 
                 //Ensure serialization directory exists. 
                 EnsurePathExists(path);
 
+#if DEBUG
+                //Debug the built strings if required. 
+                Debug.Log("Path: " + fullPath);
+#endif
 
                 //Serialize data. 
-                GenericXMLSerializer.Serialize(data, fullPath);
+                if (schema.serializationType == SerializationFormat.JSON) GenericJSONSerializer.Serialize(data, fullPath);
+                else GenericXMLSerializer.Serialize(data, fullPath);
             }
         }
 
@@ -200,7 +260,7 @@ namespace GenericSaveEditor
                             return default;
                         }
                         else return LoadDefaultFunc.Invoke(this.schema, additionalNameData);
-                    case OperationType.PLAYER:
+                    case OperationType.EXTERNAL:
                         //Check if the action is assigned, if not debug, ELSE use provided custom serialization. 
                         if (LoadPlayerFunc == null)
                         {
@@ -222,15 +282,13 @@ namespace GenericSaveEditor
             {
                 case OperationType.DEFAULT:
                     path += schema.StreamingAssetsPath;
-                    filename += schema.defaultFilename;
                     break;
-                case OperationType.PLAYER:
+                case OperationType.EXTERNAL:
                     path += schema.PersistentDataPath;
-                    filename += schema.externalFileName;
                     break;
             }
 
-            filename = string.Format(filename, additionalNameData);
+            filename = schema.GetFullFileName(additionalNameData, opType, true);
             fullPath = path + filename;
 
             //Ensure serialization directory exists. 
@@ -242,7 +300,8 @@ namespace GenericSaveEditor
 #endif
 
             //Serialize data. 
-            return GenericXMLSerializer.Deserialize<T>(fullPath);
+            if (schema.serializationType == SerializationFormat.JSON) return GenericJSONSerializer.Deserialize<T>(fullPath);
+            else return GenericXMLSerializer.Deserialize<T>(fullPath);
         }
 
         /// <summary>
@@ -251,31 +310,33 @@ namespace GenericSaveEditor
         /// <param name="additionalNameData"> The additional name data added to the file. </param>
         public void GenerateNewPlayerDefault(string additionalNameData)
         {
+            string defaultFileName = schema.GetFullFileName(additionalNameData, OperationType.DEFAULT, true);
+
             //Make sure the file exists prior to transfer. 
-            if (!CheckFileExists(schema.StreamingAssetsPath, string.Format(schema.defaultFilename, additionalNameData)))
+            if (!CheckFileExists(schema.StreamingAssetsPath, defaultFileName))
             {
-                Debug.Log("GenericSaveHandler: Requested default file" 
-                    + schema.StreamingAssetsPath + string.Format(schema.defaultFilename, additionalNameData) 
+                Debug.Log("GenericSaveHandler: Requested default file"
+                    + schema.StreamingAssetsPath + string.Format(schema.defaultFilename, additionalNameData)
                     + " does not exist");
                 return;
             }
             else
             {
                 //Generate required path strings. 
-                string fileName = string.Format(schema.defaultFilename, additionalNameData);
-                string pathDefault = schema.StreamingAssetsPath + fileName;
-                string pathPlayer = schema.PersistentDataPath + fileName;
+                string pathDefault = schema.StreamingAssetsPath + defaultFileName;
 
 #if DEBUG
                 //Debug the built strings if debug (stripped before build through preprocessor commands). 
                 Debug.Log("Default Path: " + pathDefault);
-                Debug.Log("Player Path: " + pathPlayer);
 #endif
 
                 //Load the data. 
-                T data = GenericXMLSerializer.Deserialize<T>(pathDefault);
+                T data;
+                if (schema.serializationType == SerializationFormat.JSON) data = GenericJSONSerializer.Deserialize<T>(pathDefault);
+                else data = GenericXMLSerializer.Deserialize<T>(pathDefault);
 
-                this.Save(data, additionalNameData, OperationType.PLAYER);
+
+                this.Save(data, additionalNameData, OperationType.EXTERNAL);
             }
         }
 
@@ -309,8 +370,7 @@ namespace GenericSaveEditor
     }
 
     /// <summary>
-    /// Serialization handler for Level Selection Data. 
-    /// Handles the generation of the default file for given NodeStateData. 
+    /// XML Serialization handler for generic data.  
     /// </summary>
     internal static class GenericXMLSerializer
     {
@@ -355,6 +415,39 @@ namespace GenericSaveEditor
         public static bool DataExists(string path)
         {
             return File.Exists(path);
+        }
+    }
+
+    /// <summary>
+    /// XML Serialization handler for generic data.  
+    /// </summary>
+    internal static class GenericJSONSerializer
+    {
+        /// <summary>
+        /// Generic XML Serializer.  
+        /// </summary>
+        /// <typeparam name="T"> The type of file to be serialized. </typeparam>
+        /// <param name="type"> The file reference. </param>
+        /// <param name="fileName"> The file name to serialize the data to. </param>
+        public static void Serialize<T>(T data, string path)
+        {
+            string fileJson = JsonUtility.ToJson(data, true);
+            //Debug.Log(fileJson);
+            Debug.Log("Serialized Path: " + path);
+            File.WriteAllText(path, fileJson);
+        }
+
+        /// <summary>
+        /// Generic XML deserializer. 
+        /// </summary>
+        /// <typeparam name="T"> The file type to deserialize. </typeparam>
+        /// <param name="fileName"> The name of the file to deserialize. </param>
+        /// <returns> A deserialized instance of type T. </returns>
+        public static T Deserialize<T>(string path)
+        {
+            string fContents = File.ReadAllText(path);
+            Debug.Log(fContents);
+            return JsonUtility.FromJson<T>(fContents);
         }
     }
 }
