@@ -19,7 +19,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
-## 12.12-2024 [1.0.0]
+## 13.12.2024 [1.0.1]
+
+### Added
+
+- JSON based serialization. 
+- Added runtime unit tests.
+- SerializationSchema now contains Enum for representing base serialization format (XML, JSON).
+- Better file path and file name construction functions. 
+
+### Changed
+
+- Renamed the main editor file [GenericXMLSerializer.cs -> GenericSaveEditor.cs]
+- Renamed the main runtime file [GenericXMLSerializer.cs -> GenericSaveRuntime.cs]
+- Added JSON test cases to editor tests. 
+
+### Removed
+
+- N/A
+
+## 12.12.2024 [1.0.0]
 
 ### Added
 
