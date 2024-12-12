@@ -1,0 +1,21 @@
+{
+  "name": "com.cater.cgenericgamesave",
+  "version": "1.0.0",
+  "displayName": "C_GenericGameSave",
+  "description": "A generic based game save utility, designed for both unity and unity editor applications. Primarially uses XML for parses.",
+  "unity": "2022.3",
+  "unityRelease": "36f1",
+  "documentationUrl": "https://example.com/",
+  "changelogUrl": "https://example.com/changelog.html",
+  "licensesUrl": "https://example.com/licensing.html",
+  "keywords": [
+    "XML",
+    "Generic Save",
+    "Save Handler"
+  ],
+  "author": {
+    "name": "C.Ater",
+    "email": "CatAter92@gmail.com",
+    "url": "https://www.linkedin.com/in/catater92/"
+  }
+}
