@@ -28,44 +28,11 @@ Thus hopefully C_GenericGameSave will help remove the complexity of data setup f
         - Drag and drop download contents into the folder. 
         - Congrats should now run as an embedded package within your project. 
 
-## General usage guide
-- Generating an instance. 
-- Import GenericSaveRuntime for runtime uses or GenericSaveEditor for editor applications.
-- Define serialization schema: 
-    - Example: Defining a XML serialization schema.
-        
-    -     public SerializationSchema schemaXML = new SerializationSchema()
-          {
-            defaultFilename = "DefaultTest",
-            externalFilename = "PTest",
-            folderName = "TestData",
-            serializationType = SerializationFormat.XML
-           };
-    
-    - Example: Defining a XML serialization schema.
-        
-    -     public SerializationSchema schemaJson = new SerializationSchema()
-          {
-            defaultFilename = "DefaultTest",
-            externalFilename = "PTest",
-            folderName = "TestData",
-            serializationType = SerializationFormat.JSON
-          };
-
-
-- Create an instance of GenericSaveHandler: 
-  
-        GenericSaveHandler<FooData> gsh = new GenericSaveEditor.GenericSaveHandler<FooData>(schema);
-
-- Call Save/Load Functions:
-
-        gsh.Save(data, "_", OperationType.DEFAULT);
-        FooData data = gsh.Load("_", OperationType.DEFAULT);
-
-
 ### Note versions are identical between both editor and runtime version currently. 
 However, the separation is kept because of possible future divergence between the two. 
 This is why there is a specified GenericSaveEditor.cs and GenericSaveRuntime.cs and their respective tests. 
+
+## General usage guide
 
 ## API Documentation:
 https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/APIReference.md

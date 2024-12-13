@@ -146,6 +146,23 @@ public class SaveUtilTest_Editor
     }
 
     [Test]
+    public void SaveUtil_DeserializeExternalDataXML()
+    {
+        TestDataEditor data = new TestDataEditor()
+        {
+            name = "Test",
+            index = 0,
+            value = 0.5F,
+            state = true
+        };
+
+        GenericSaveHandler<TestDataEditor> gsh = new GenericSaveEditor.GenericSaveHandler<TestDataEditor>(schemaXML);
+        gsh.Save(data, "_", OperationType.EXTERNAL);
+        TestDataEditor dataDeserialized = gsh.Load("_", OperationType.EXTERNAL);
+        Assert.AreEqual(data, dataDeserialized);
+    }
+
+    [Test]
     public void SaveUtil_WriteDefaultToExternalXML()
     {
         TestDataEditor data = new TestDataEditor()
@@ -170,22 +187,6 @@ public class SaveUtilTest_Editor
         Assert.AreEqual(data, deserialized);
     }
 
-    [Test]
-    public void SaveUtil_DeserializeExternalDataXML()
-    {
-        TestDataEditor data = new TestDataEditor()
-        {
-            name = "Test",
-            index = 0,
-            value = 0.5F,
-            state = true
-        };
-
-        GenericSaveHandler<TestDataEditor> gsh = new GenericSaveEditor.GenericSaveHandler<TestDataEditor>(schemaXML);
-        gsh.Save(data, "_", OperationType.EXTERNAL);
-        TestDataEditor dataDeserialized = gsh.Load("_", OperationType.EXTERNAL);
-        Assert.AreEqual(data, dataDeserialized);
-    }
     #endregion
 
     #region JSON. 
