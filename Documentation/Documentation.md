@@ -68,4 +68,4 @@ However, the separation is kept because of possible future divergence between th
 This is why there is a specified GenericSaveEditor.cs and GenericSaveRuntime.cs and their respective tests. 
 
 ## API Documentation:
-https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/Documentation.md 
+https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/APIReference.md
