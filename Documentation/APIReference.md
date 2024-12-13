@@ -11,7 +11,7 @@
 
 ## OperationType
 |  Name | Functionality |
-| ---|---|---|---|
+| ---|---|
 | DEFAULT  |Denotes a default (internal) save operation. |
 | EXTERNAL |Denotes an external save operation.         |
 
@@ -21,7 +21,7 @@
 Enum representing the type of serialization to use. 
 
 | Name | Functionality|
-| ---|---|---|---|
+| ---|---|
 | XML  | Denotes that the used serialization should be XML |
 | JSON | Denotes that the used serialization should be JSON|
 
@@ -31,7 +31,7 @@ Enum representing the type of serialization to use.
 Responsible for handling string constructs for serialization (filepath, filename). 
 
 | Access Modifier | Name | Type | Parameters | Functionality | Comments|
-| ---|---|---|---|
+| ---|---|---|---|---|---|
 | public |XML_EXTENSION| const string |---|The default extension for XML files.|---|
 | public |JSON_EXTENSION| const string |---|The default extension for JSON files.|---|
 | public |serializationFormat| SerializationFormat |---|Enum representation of the serialization format to use (Defaults to XML).|---|
@@ -43,7 +43,6 @@ Responsible for handling string constructs for serialization (filepath, filename
 | public |GetFullPath_Default(string additionalNameData, bool addExtension)|Function, return type: string|string additionalNameData - additional name data provided for file naming, bool addExtension - whether or not to add the serialization file extension. |Returns the full path used for default data file serialization/deserialization.|---|
 | public |GetFullPath_External(string additionalNameData, bool addExtension)|Function, return type: string|string additionalNameData - additional name data provided for file naming, bool addExtension - whether or not to add the serialization file extension. |Returns the full path used for external data file serialization/deserialization.|---|
 | public |GetFullFileName(string additionalNameData, bool addExtension)|Function, return type: string|string additionalNameData - additional name data provided for file naming, OperationType opType - The operation type to perform, bool addExtension - flags whether to add the serialization file extension. |Returns the file name used for serialization/deserialization.|---|
-| ---|---|---|---|---|---|
 
 ---
 
@@ -53,7 +52,7 @@ Provided types are constrained to being classes.
 NOTE: This is the editor version, and will not be compiled, meaning it is not useful for runtime data parsing. 
 
 | Access Modifier | Name | Type | Parameters | Functionality | Comments|
-| ---|---|---|---|
+|---|---|---|---|---|---|
 | Public | useCustomSerialization | bool | -- | Defines whether the system should use custom serialization functions. |
 | Private | schema | SerializationSchema | -- |The serialization schema used for the data type.||
 | Private | SaveDefaultAction | Action<T, SerializationSchema, string> | -- |Action (anonymous function) used for receiving calls for custom Default serialization.|Only called if GenericSaveHandler.useCustomSerialization is enabled.|
@@ -75,7 +74,7 @@ Class providing runtime save file utilities, utilized prior to parsing data inte
 Provided types are constrained to being classes. 
 
 | Access Modifier | Name | Type | Parameters | Functionality | Comments|
-| ---|---|---|---|
+|---|---|---|---|---|---|
 | Public | useCustomSerialization | bool | -- | Defines whether the system should use custom serialization functions. |
 | Private | schema | SerializationSchema | -- |The serialization schema used for the data type.||
 | Private | SaveDefaultAction | Action<T, SerializationSchema, string> | -- |Action (anonymous function) used for receiving calls for custom Default serialization.|Only called if GenericSaveHandler.useCustomSerialization is enabled.|
