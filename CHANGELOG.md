@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
-## 13.12.2024 [1.0.1]
+## 14.12.2024 [1.0.1]
 
 ### Added
 
@@ -33,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed the main editor file [GenericXMLSerializer.cs -> GenericSaveEditor.cs]
 - Renamed the main runtime file [GenericXMLSerializer.cs -> GenericSaveRuntime.cs]
 - Added JSON test cases to editor tests. 
+- Replaced a naming convention.
+	- Player -> External, better reflects actual use case. 
+- Added documentation. 
+	- API Reference. 
+	- General Use Guide. 
+	- Custom Serialization Guide. 
+	- Documentation. 
+- Fixed some naming errata. 
 
 ### Removed
 
