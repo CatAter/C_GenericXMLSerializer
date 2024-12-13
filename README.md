@@ -24,3 +24,7 @@ https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/Docume
 
 ## - API Documentation:
 https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/APIReference.md
+
+## Contact Info
+- Email - catater92@gmail.com
+- Discord - _grinless_
