@@ -147,7 +147,7 @@ namespace GenericSaveRuntime
         /// Action (anonymous function) used for receiving calls for custom Player serialization.  
         /// Only called if GenericSaveHandler.useCustomSerialization is enabled.
         /// </summary>
-        public Action<T, SerializationSchema, string> SavePlayerAction;
+        public Action<T, SerializationSchema, string> SaveExternalAction;
 
         /// <summary>
         /// Function (anonymous function) used to receive calls for custom Default deserialization.
@@ -159,7 +159,7 @@ namespace GenericSaveRuntime
         /// Function (anonymous function) used to receive calls for custom Player deserialization.
         /// Only called if GenericSaveHandler.useCustomSerialization is enabled.
         /// </summary>
-        public Func<SerializationSchema, string, T> LoadPlayerFunc;
+        public Func<SerializationSchema, string, T> LoadExternalFunc;
         #endregion
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace GenericSaveRuntime
                     case OperationType.EXTERNAL:
                         //Check if the action is assigned, if not debug, ELSE use provided custom serialization. 
                         if (SaveDefaultAction == null) Debug.Log("GenericSaveHandler: No custom SaveDefaultAction provided, Save Failed.");
-                        else SavePlayerAction?.Invoke(data, this.schema, additionalNameData);
+                        else SaveExternalAction?.Invoke(data, this.schema, additionalNameData);
                         break;
                 }
                 return;
@@ -261,12 +261,12 @@ namespace GenericSaveRuntime
                         else return LoadDefaultFunc.Invoke(this.schema, additionalNameData);
                     case OperationType.EXTERNAL:
                         //Check if the action is assigned, if not debug, ELSE use provided custom serialization. 
-                        if (LoadPlayerFunc == null)
+                        if (LoadExternalFunc == null)
                         {
                             Debug.Log("GenericSaveHandler: No custom LoadPlayerFunc provided, Load Failed.");
                             return default;
                         }
-                        else return LoadPlayerFunc?.Invoke(this.schema, additionalNameData);
+                        else return LoadExternalFunc?.Invoke(this.schema, additionalNameData);
                 }
             }
 
@@ -378,7 +378,7 @@ namespace GenericSaveRuntime
         /// </summary>
         /// <typeparam name="T"> The type of file to be serialized. </typeparam>
         /// <param name="type"> The file reference. </param>
-        /// <param name="fileName"> The file name to serialize the data to. </param>
+        /// <param name="path"> The file path to serialize the data to </param>
         public static void Serialize<T>(T type, string path)
         {
             XmlSerializer s = new XmlSerializer(typeof(T));
@@ -395,7 +395,7 @@ namespace GenericSaveRuntime
         /// Generic XML deserializer. 
         /// </summary>
         /// <typeparam name="T"> The file type to deserialize. </typeparam>
-        /// <param name="fileName"> The name of the file to deserialize. </param>
+        /// <param name="path"> The file path to deserialize from. </param>
         /// <returns> A deserialized instance of type T. </returns>
         public static T Deserialize<T>(string path)
         {
@@ -405,16 +405,6 @@ namespace GenericSaveRuntime
             stream.Close();
             return (T)output;
         }
-
-        /// <summary>
-        /// Check if the data file exists.
-        /// </summary>
-        /// <param name="path"> The path to serialize to. </param>
-        /// <returns> True if the file exist. </returns>
-        public static bool DataExists(string path)
-        {
-            return File.Exists(path);
-        }
     }
 
     /// <summary>
@@ -423,11 +413,11 @@ namespace GenericSaveRuntime
     internal static class GenericJSONSerializer
     {
         /// <summary>
-        /// Generic XML Serializer.  
+        /// Generic JSON Serializer.  
         /// </summary>
         /// <typeparam name="T"> The type of file to be serialized. </typeparam>
-        /// <param name="type"> The file reference. </param>
-        /// <param name="fileName"> The file name to serialize the data to. </param>
+        /// <param name="data"> The file reference. </param>
+        /// <param name="path"> The file name to serialize the data to. </param>
         public static void Serialize<T>(T data, string path)
         {
             string fileJson = JsonUtility.ToJson(data, true);
@@ -437,10 +427,10 @@ namespace GenericSaveRuntime
         }
 
         /// <summary>
-        /// Generic XML deserializer. 
+        /// Generic JSON deserializer. 
         /// </summary>
         /// <typeparam name="T"> The file type to deserialize. </typeparam>
-        /// <param name="fileName"> The name of the file to deserialize. </param>
+        /// <param name="path"> The name of the file to deserialize. </param>
         /// <returns> A deserialized instance of type T. </returns>
         public static T Deserialize<T>(string path)
         {
