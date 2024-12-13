@@ -19,9 +19,7 @@ Thus hopefully C_GenericGameSave will help remove the complexity of data setup f
 - Built in encryption. 
 - Custom encryption system overrides. 
 
-# Documentation Index. 
-
-## - Setup/General usage
+## Documentation. 
 https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/Documentation.md
 
 ## - API Documentation:

@@ -32,7 +32,11 @@ Thus hopefully C_GenericGameSave will help remove the complexity of data setup f
 However, the separation is kept because of possible future divergence between the two. 
 This is why there is a specified GenericSaveEditor.cs and GenericSaveRuntime.cs and their respective tests. 
 
-## General usage guide
+## General Usage Guide:
+https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/Doc_GeneralUseGuide.md
+
+## Custom Serialization Guide:
+https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/Doc_CustomSerialization.md
 
 ## API Documentation:
 https://github.com/CatAter/C_GenericXMLSerializer/blob/main/Documentation/APIReference.md
